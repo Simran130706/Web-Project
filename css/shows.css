@@ -1,0 +1,111 @@
+/* ===== SHOWS PAGE STYLING ===== */
+
+body {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  background: #0f111a;
+  color: #fff;
+  text-align: center;
+}
+
+.page-title {
+  margin-top: 30px;
+  font-size: 2rem;
+  color: #00b4d8;
+}
+
+.subtitle {
+  color: #aaa;
+  margin-bottom: 20px;
+}
+
+/* ===== Add Button ===== */
+.add-btn {
+  background: #00b4d8;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.add-btn:hover {
+  background: #0077b6;
+}
+
+/* ===== Show Grid ===== */
+.show-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 25px;
+  padding: 30px;
+  justify-content: center;
+}
+
+/* ===== Card Style ===== */
+.show-card {
+  background: #1b1e2a;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s;
+}
+
+.show-card:hover {
+  transform: translateY(-5px);
+}
+
+.show-card img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+}
+
+.show-info {
+  padding: 15px;
+}
+
+.show-info h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+.show-info p {
+  color: #aaa;
+  font-size: 0.9rem;
+  margin: 5px 0 10px;
+}
+
+/* ===== Buttons ===== */
+.edit-btn,
+.delete-btn {
+  background: none;
+  border: none;
+  color: #00b4d8;
+  cursor: pointer;
+  font-size: 18px;
+  margin: 0 8px;
+  transition: 0.3s;
+}
+
+.delete-btn {
+  color: #ff4d6d;
+}
+
+.edit-btn:hover {
+  color: #0096c7;
+}
+
+.delete-btn:hover {
+  color: #e63946;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+  .show-section {
+    grid-template-columns: 1fr 1fr;
+  }
+}
