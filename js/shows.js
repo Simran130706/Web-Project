@@ -1,44 +1,23 @@
-// === SHOW TRACKER SCRIPT ===
+// === SHOW TRACKER SCRIPT (Backend Connected) ===
+
+// Backend API Base URL
+const API_URL = "http://localhost:5000/api/shows";
 
 // Select main container
 const showSection = document.querySelector(".show-section");
 
-// Load saved shows from localStorage
-let shows = JSON.parse(localStorage.getItem("shows")) || [
-  {
-    title: "Breaking Bad",
-    year: 2008,
-    genre: "Crime, Drama",
-    rating: 9.5,
-    img: "https://via.placeholder.com/200x280?text=Breaking+Bad"
-  },
-  {
-    title: "Game of Thrones",
-    year: 2011,
-    genre: "Fantasy, Drama",
-    rating: 9.2,
-    img: "https://via.placeholder.com/200x280?text=Game+of+Thrones"
-  },
-  {
-    title: "The Witcher",
-    year: 2019,
-    genre: "Fantasy, Action",
-    rating: 8.2,
-    img: "https://via.placeholder.com/200x280?text=The+Witcher"
-  },
-  {
-    title: "Peaky Blinders",
-    year: 2013,
-    genre: "Crime, Drama",
-    rating: 8.8,
-    img: "https://via.placeholder.com/200x280?text=Peaky+Blinders"
-  }
-];
+// === FETCH & DISPLAY SHOWS ===
+async function fetchShows() {
+  const res = await fetch(API_URL);
+  const data = await res.json();
+  displayShows(data);
+}
 
 // === DISPLAY SHOWS ===
-function displayShows(list = shows) {
+function displayShows(list) {
   showSection.innerHTML = "";
-  list.forEach((show, index) => {
+
+  list.forEach((show) => {
     const card = document.createElement("div");
     card.className = "show-card";
     card.innerHTML = `
@@ -53,69 +32,64 @@ function displayShows(list = shows) {
     showSection.appendChild(card);
 
     // Delete Show
-    card.querySelector(".delete-btn").addEventListener("click", () => {
+    card.querySelector(".delete-btn").addEventListener("click", async () => {
       if (confirm(`Delete "${show.title}"?`)) {
-        shows.splice(index, 1);
-        saveShows();
-        displayShows();
+        await fetch(`${API_URL}/${show.id}`, { method: "DELETE" });
+        fetchShows();
       }
     });
 
     // Edit Show
-    card.querySelector(".edit-btn").addEventListener("click", () => editShow(index));
+    card.querySelector(".edit-btn").addEventListener("click", () => editShow(show));
   });
 }
 
 // === ADD SHOW ===
-document.querySelector(".add-btn").addEventListener("click", (e) => {
+document.querySelector(".add-btn").addEventListener("click", async (e) => {
   e.preventDefault();
 
   const title = prompt("Enter show title:");
   if (!title) return alert("Title cannot be empty!");
 
-  const year = prompt("Enter release year:");
-  const genre = prompt("Enter genre:");
-  const rating = prompt("Enter rating (out of 10):");
+  const year = prompt("Enter release year:") || "Unknown";
+  const genre = prompt("Enter genre:") || "N/A";
+  const rating = prompt("Enter rating (out of 10):") || "N/A";
   const img = prompt("Enter image URL (optional):") || `https://via.placeholder.com/200x280?text=${encodeURIComponent(title)}`;
 
-  const newShow = {
-    title,
-    year: year || "Unknown",
-    genre: genre || "N/A",
-    rating: rating || "N/A",
-    img
-  };
+  const newShow = { title, year, genre, rating, img };
 
-  shows.push(newShow);
-  saveShows();
-  displayShows();
+  await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(newShow),
+  });
+
+  fetchShows();
 });
 
 // === EDIT SHOW ===
-function editShow(index) {
-  const show = shows[index];
-
+async function editShow(show) {
   const newTitle = prompt("Edit title:", show.title);
   const newYear = prompt("Edit year:", show.year);
   const newGenre = prompt("Edit genre:", show.genre);
   const newRating = prompt("Edit rating:", show.rating);
   const newImg = prompt("Edit image URL:", show.img);
 
-  shows[index] = {
+  const updated = {
     title: newTitle || show.title,
     year: newYear || show.year,
     genre: newGenre || show.genre,
     rating: newRating || show.rating,
-    img: newImg || show.img
+    img: newImg || show.img,
   };
 
-  saveShows();
-  displayShows();
-}
+  await fetch(`${API_URL}/${show.id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updated),
+  });
 
-// === SAVE TO LOCALSTORAGE ===
-function saveShows() {
-  localStorage.setItem("shows", JSON.stringify(shows));
+  fetchShows();
 }
 
 // === SEARCH BAR ===
@@ -133,9 +107,11 @@ searchBox.style.cssText = `
 `;
 document.querySelector("body").insertBefore(searchBox, showSection);
 
-searchBox.addEventListener("input", () => {
+searchBox.addEventListener("input", async () => {
+  const res = await fetch(API_URL);
+  const shows = await res.json();
   const query = searchBox.value.toLowerCase();
-  const filtered = shows.filter(s => s.title.toLowerCase().includes(query));
+  const filtered = shows.filter((s) => s.title.toLowerCase().includes(query));
   displayShows(filtered);
 });
 
@@ -148,17 +124,19 @@ sortDiv.innerHTML = `
 `;
 document.querySelector("body").insertBefore(sortDiv, showSection);
 
-document.getElementById("sortYear").addEventListener("click", () => {
+document.getElementById("sortYear").addEventListener("click", async () => {
+  const res = await fetch(API_URL);
+  const shows = await res.json();
   shows.sort((a, b) => a.year - b.year);
-  saveShows();
-  displayShows();
+  displayShows(shows);
 });
 
-document.getElementById("sortRating").addEventListener("click", () => {
+document.getElementById("sortRating").addEventListener("click", async () => {
+  const res = await fetch(API_URL);
+  const shows = await res.json();
   shows.sort((a, b) => b.rating - a.rating);
-  saveShows();
-  displayShows();
+  displayShows(shows);
 });
 
 // === INITIAL DISPLAY ===
-displayShows();
+fetchShows();

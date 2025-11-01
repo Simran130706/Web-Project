@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Shows | Movie Tracker</title>
-  <link rel="stylesheet" href="css/shows.css" />
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/shows.css" />
 </head>
 <body>
   <!-- ===== NAVBAR ===== -->
@@ -28,7 +28,14 @@
     <!-- Add New Show Button -->
     <button class="add-btn">+ Add New Show</button>
 
-    <!-- Search & Sort will be injected here dynamically -->
+    <!-- Search and Sort Controls -->
+    <div class="controls">
+      <input type="text" id="searchBox" placeholder="🔍 Search shows..." />
+      <div class="sort-btns">
+        <button id="sortYear" class="add-btn">Sort by Year</button>
+        <button id="sortRating" class="add-btn">Sort by Rating</button>
+      </div>
+    </div>
 
     <!-- Shows Display Section -->
     <div class="show-section"></div>
